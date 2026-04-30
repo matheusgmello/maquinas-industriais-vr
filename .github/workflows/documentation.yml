@@ -1,0 +1,43 @@
+name: documentation
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Clona repositório
+        uses: actions/checkout@v5
+
+      - name: Configura Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+
+      - name: Instala dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install --requirement requirements.txt
+
+      - name: Constrói documentação
+        run: mkdocs build --strict
+
+      - name: Configura GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Envia artefato do site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/
+
+      - name: Publica no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
