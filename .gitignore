@@ -1,0 +1,64 @@
+# Python / MkDocs
+.venv/
+site/
+mkdocs-server*.log
+__pycache__/
+*.py[cod]
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Arquivos grandes recebidos/exportados
+Modelos/
+Projetinho/
+Torno/
+*.ova
+*.ovf
+*.vmdk
+*.mf
+*.zip
+*.7z
+*.rar
+
+# Unity - pastas geradas localmente
+**/Library/
+**/Temp/
+**/Obj/
+**/Build/
+**/Builds/
+**/Logs/
+**/UserSettings/
+**/MemoryCaptures/
+**/Recordings/
+
+# Unity - arquivos temporarios
+*.csproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity / Visual Studio cache
+.vs/
+.gradle/
+
+# Pacotes Android/Unity gerados
+*.apk
+*.aab
+*.unitypackage
+
+# Observacao:
+# O modelo .fbx pequeno pode ser versionado se fizer sentido.
+# Para modelos grandes, prefira Git LFS.

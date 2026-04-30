@@ -1,0 +1,40 @@
+site_name: Realidade Virtual
+site_description: Documentação do material de realidade virtual associado ao Projeto Aprendizado de máquinas industriais, utilizando Realidade Virtual (RV)
+site_author: Matheus e Gustavo
+
+theme:
+  name: material
+  language: pt-BR
+  palette:
+    - scheme: default
+      primary: blue grey
+      accent: light blue
+      toggle:
+        icon: material/weather-night
+        name: Alternar para modo escuro
+    - scheme: slate
+      primary: blue grey
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Alternar para modo claro
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.highlight
+    - content.code.copy
+
+nav:
+  - Início: index.md
+  - Inventário: inventario.md
+  - Unity: unity.md
+  - Modelo 3D: modelo-3d.md
+  - Máquina Virtual: maquina-virtual.md
+  - Stack: stack.md
+  - Problemas e Soluções: problemas-e-solucoes.md
+  - Roadmap: roadmap.md
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
