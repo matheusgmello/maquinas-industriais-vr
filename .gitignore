@@ -40,6 +40,10 @@ Projetinho/TornoREV2/Builds/
 Projetinho/TornoREV2/UserSettings/
 Projetinho/TornoREV2/.vs/
 
+# Unity - cenas de recuperação automática
+Projetinho/TornoREV2/Assets/_Recovery/
+Projetinho/TornoREV2/Assets/_Recovery.meta
+
 # Backups locais (ficam fora do Git)
 Backups/
 
