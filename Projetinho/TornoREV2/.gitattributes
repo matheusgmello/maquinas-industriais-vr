@@ -1,0 +1,15 @@
+# Unity - line endings
+* text=auto
+
+# Forçar LF para arquivos de texto Unity
+*.cs        text eol=lf
+*.unity     text eol=lf
+*.asset     text eol=lf
+*.mat       text eol=lf
+*.meta      text eol=lf
+*.prefab    text eol=lf
+*.anim      text eol=lf
+*.json      text eol=lf
+
+# Tratar FBX como binário (não fazer diff de texto)
+*.fbx       binary

@@ -14,7 +14,6 @@ desktop.ini
 
 # Arquivos grandes recebidos/exportados
 Modelos/
-Projetinho/
 Torno/
 *.ova
 *.ovf
@@ -23,6 +22,26 @@ Torno/
 *.zip
 *.7z
 *.rar
+
+# Unity - pastas de assets pesados (Asset Store, não são nosso trabalho)
+Projetinho/TornoREV2/Assets/Free/
+Projetinho/TornoREV2/Assets/Free.meta
+Projetinho/TornoREV2/Assets/ADG_Textures/
+Projetinho/TornoREV2/Assets/ADG_Textures.meta
+Projetinho/TornoREV2/Assets/Samples/
+Projetinho/TornoREV2/Assets/Samples.meta
+
+# Unity - pastas geradas (não versionar)
+Projetinho/TornoREV2/Library/
+Projetinho/TornoREV2/Temp/
+Projetinho/TornoREV2/Logs/
+Projetinho/TornoREV2/obj/
+Projetinho/TornoREV2/Builds/
+Projetinho/TornoREV2/UserSettings/
+Projetinho/TornoREV2/.vs/
+
+# Backups locais (ficam fora do Git)
+Backups/
 
 # Unity - pastas geradas localmente
 **/Library/
@@ -62,3 +81,8 @@ Torno/
 # Observacao:
 # O modelo .fbx pequeno pode ser versionado se fizer sentido.
 # Para modelos grandes, prefira Git LFS.
+
+# Agents Files
+codex.md
+claude.md
+.claude/
