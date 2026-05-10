@@ -204,7 +204,3 @@ O GitHub Actions publica automaticamente a documentação no GitHub Pages a cada
 Configuração em: `.github/workflows/documentation.yml`
 
 ---
-
-## Para bolsistas e colaboradores
-
-Leia o [`codex.md`](./codex.md) antes de qualquer coisa — ele contém o histórico técnico completo do projeto: decisões tomadas, problemas encontrados e resolvidos, estado atual e próximos passos.
