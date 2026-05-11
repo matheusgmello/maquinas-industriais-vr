@@ -4,49 +4,59 @@ Esta é uma proposta de evolução para transformar o material em um projeto de 
 
 ## Frente atual - Torno mecânico
 
-O foco atual é organizar e recuperar o material existente do torno mecânico, deixando claro o que já foi identificado e o que ainda precisa ser desenvolvido.
+### Fase 1 - Organização ✅ Concluída
 
-### Fase 1 - Organização
+- [x] Inventário dos arquivos recebidos.
+- [x] Separação de arquivos brutos, projeto Unity e documentação.
+- [x] Configuração do Git com `.gitignore` e `.gitattributes` corretos.
+- [x] Versionamento do projeto Unity no repositório.
+- [x] Documentação técnica publicada com MkDocs + GitHub Pages.
 
-- Manter inventário atualizado dos arquivos.
-- Confirmar se a VM contém algum projeto mais completo.
-- Separar arquivos brutos, projeto Unity e documentação.
-- Decidir se modelos 3D vão para Git normal ou Git LFS.
+### Fase 2 - Visualização ✅ Concluída
 
-### Fase 2 - Visualização
+- [x] Importar modelo FBX no Unity com URP (Universal Render Pipeline).
+- [x] Configurar 13 materiais URP com cores corretas.
+- [x] Criar cena de visualização (`TornoMecanico.unity`).
+- [x] Verificar hierarquia separada — cada peça é um GameObject independente.
+- [x] Confirmar viabilidade de animações (peças separadas = animável).
 
-- Melhorar materiais do torno.
-- Ajustar escala realista.
-- Criar câmera orbital ou controle de movimento.
-- Adicionar iluminação e piso simples.
+### Fase 3 - Animações 🔄 Em andamento
 
-### Fase 3 - Interação
+- [x] Criar script editor `CreateTornoAnimations.cs`.
+- [x] Criar `Assets/Animations/` com 5 clips de demonstração:
+  - [x] `Placa_Girando` — EIXO ÁRVORE girando continuamente (loop).
+  - [x] `Carro_Avancando` — CARRO LONGITUDINAL avançando e recuando (loop).
+  - [x] `Manivela_Girando` — MANIVELA girando (loop).
+  - [x] `Torre_Rotacionando` — TORRE rotacionando 90° (troca de ferramenta).
+  - [x] `Carro_Transversal` — CARRO TRANSVERSAL avançando e recuando (loop).
+- [x] Criar `TornoController.controller` (Animator Controller) com estados e transições.
+- [x] Adicionar componente `Animator` ao objeto `torno` na cena.
+- [ ] Ajustar eixos de rotação/translação após inspeção visual em Play Mode.
+- [ ] Adicionar animações das CASTANHA 1/2/3 (garras do mandril abrindo/fechando).
+- [ ] Sincronizar animação da manivela com o movimento do carro.
+- [ ] Adicionar sons de máquina (motor, movimento mecânico).
 
-- Separar peças do torno que devem ser manipuláveis.
-- Adicionar interação com botões.
-- Criar estados: desligado, ligado, operando.
-- Adicionar feedback visual e sonoro.
+### Fase 4 - Interação VR ⏳ Próxima etapa
 
-### Fase 4 - Experiência VR
+- [ ] Adicionar colisores (Colliders) nas peças interativas.
+- [ ] Configurar XR Origin com câmera e controladores.
+- [ ] Implementar agarrar (XR Grab Interactable) nas manivelas.
+- [ ] Criar estados: desligado → ligado → operando.
+- [ ] Adicionar feedback visual (highlight com QuickOutline já instalado).
+- [ ] Testar com simulador XR no editor.
 
-- Configurar XR Interaction Toolkit.
-- Adicionar XR Origin.
-- Configurar controles VR ou simulador XR.
-- Testar teleporte, agarrar objetos e interações.
+### Fase 5 - Conteúdo didático ⏳ Futuro
 
-### Fase 5 - Conteúdo didático
+- [ ] Criar objetivos de aprendizagem.
+- [ ] Adicionar etiquetas/hotspots informativos nas partes do torno.
+- [ ] Criar roteiro de operação guiada.
+- [ ] Adicionar checklist de segurança e procedimentos.
 
-- Criar objetivos de aprendizagem.
-- Adicionar etiquetas nas partes do torno.
-- Criar roteiro de uso.
-- Adicionar checklist de segurança e operação.
+### Fase 6 - Entrega ⏳ Futuro
 
-### Fase 6 - Entrega
-
-- Gerar build executável.
-- Documentar requisitos de hardware.
-- Publicar documentação com GitHub Pages.
-- Criar vídeo ou imagens demonstrativas.
+- [ ] Gerar build executável (PC e/ou Meta Quest).
+- [ ] Documentar requisitos de hardware.
+- [ ] Criar vídeo ou imagens demonstrativas.
 
 ## Próximo passo - Fábrica virtual
 

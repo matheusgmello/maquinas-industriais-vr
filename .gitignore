@@ -86,7 +86,8 @@ Backups/
 # O modelo .fbx pequeno pode ser versionado se fizer sentido.
 # Para modelos grandes, prefira Git LFS.
 
-# Agents Files
-codex.md
+# Agents Files (arquivos internos dos agentes — não versionar)
 claude.md
 .claude/
+# Exceção: CLAUDE.md é o arquivo de instruções do projeto (deve ser versionado)
+!CLAUDE.md

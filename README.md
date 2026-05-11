@@ -19,7 +19,7 @@ Permitir que estudantes e operadores explorem, entendam e pratiquem o uso de má
 | Cena de visualização Unity | ✅ Funcional |
 | Pipeline de renderização (URP) | ✅ Configurado |
 | Interações VR | 🔄 Em desenvolvimento |
-| Animações das peças móveis | ⏳ Aguardando separação no Blender |
+| Animações das peças móveis | ✅ 5 clips criados (placa, carros, manivela, torre) |
 | Documentação técnica (MkDocs) | ✅ Publicada |
 
 ---
@@ -33,13 +33,14 @@ RealidadeVirtual/
 │   └── TornoREV2/                 # Projeto Unity 6.3 LTS
 │       ├── Assets/
 │       │   ├── TornoMecanico/     # Modelo FBX + 13 materiais URP
+│       │   ├── Animations/        # 5 clips de animação + TornoController
 │       │   ├── Scenes/            # Cena TornoMecanico.unity
 │       │   └── Editor/            # Scripts auxiliares do Editor
 │       ├── Packages/              # Dependências Unity (manifest.json)
 │       └── ProjectSettings/       # Configurações do projeto (URP, XR, etc.)
 ├── mkdocs.yml                     # Configuração do site de documentação
 ├── requirements.txt               # Dependências Python (MkDocs)
-└── codex.md                       # Memória técnica do projeto
+└── CLAUDE.md                      # Instruções e memória técnica (Claude Code)
 ```
 
 > **Não estão no Git:** `Library/`, `Temp/`, pastas de assets de terceiros (`Free/`, `ADG_Textures/`), arquivos grandes (`.ova`, `.zip`), e o ambiente Python (`.venv/`).
@@ -153,9 +154,10 @@ python -m venv .venv
 - [x] Extrair e configurar 13 materiais URP
 - [x] Configurar pipeline de renderização (URP)
 - [x] Versionar projeto no Git
-- [ ] Separar peças móveis no Blender (placa, carro, volantes)
+- [x] Verificar hierarquia separada do FBX (peças já são objetos independentes)
+- [x] Criar 5 clips de animação (placa, carros, manivela, torre)
+- [ ] Ajustar eixos de animação em Play Mode
 - [ ] Adicionar colisores para interação VR
-- [ ] Criar animações das peças móveis
 - [ ] Implementar hotspots educacionais (placas informativas)
 - [ ] Configurar experiência VR completa com OpenXR
 - [ ] Gerar build executável
