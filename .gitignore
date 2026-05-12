@@ -23,6 +23,9 @@ Torno/
 *.7z
 *.rar
 
+# FBX duplicados / recebidos na raiz
+torno(1).fbx
+
 # Unity - pastas de assets pesados (Asset Store, não são nosso trabalho)
 Projetinho/TornoREV2/Assets/Free/
 Projetinho/TornoREV2/Assets/Free.meta
