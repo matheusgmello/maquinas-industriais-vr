@@ -33,14 +33,19 @@ public class TornoDemo : MonoBehaviour
     [Tooltip("Ângulo de rotação da torre na troca de ferramenta.")]
     public Vector3 rotacaoTorre = new Vector3(0f, 90f, 0f);
 
+    [Header("Manivela do Carro")]
+    [Tooltip("Eixo LOCAL de rotação da manivela. Ajuste se girar no eixo errado.")]
+    public Vector3 eixoManivela = Vector3.right;
+
     // ── Referências ─────────────────────────────────────────────────────────
     // Peças que giram juntas formando a placa/mandril
     readonly string[] _nomesPlaca = { "EIXO ÁRVORE", "CASTANHA 1", "CASTANHA 2", "CASTANHA 3" };
     Transform[] _pecasPlaca;
 
     Transform _carroLong;
-    Transform _manivela;   // MANIVELA CARRO
-    Transform _torre;      // TORRE DE FERRAMENTA
+    Transform _manivela;        // MANIVELA CARRO
+    Vector3   _manivelaCenter;  // centro real da mesh (bounds) em espaço local
+    Transform _torre;           // TORRE DE FERRAMENTA
 
     Vector3 _carroOrigPos;
     bool    _placaGirando;
@@ -74,6 +79,16 @@ public class TornoDemo : MonoBehaviour
         if (_manivela  == null) Debug.LogWarning("[TornoDemo] 'MANIVELA CARRO' não encontrada — ok se não houver.");
         if (_torre     == null) Debug.LogWarning("[TornoDemo] 'TORRE DE FERRAMENTA' não encontrada — ok se não houver.");
 
+        // Calcula o centro real da mesh da manivela (em espaço local)
+        // para usar RotateAround — evita o efeito de "dar voltas em círculo"
+        // causado pelo pivot/origem do modelo estar fora do centro da roda.
+        if (_manivela != null)
+        {
+            var mf = _manivela.GetComponent<MeshFilter>();
+            _manivelaCenter = mf != null ? mf.sharedMesh.bounds.center : Vector3.zero;
+            Debug.Log($"[TornoDemo] Centro local da MANIVELA CARRO: {_manivelaCenter}");
+        }
+
         if (_carroLong != null)
             _carroOrigPos = _carroLong.localPosition;
 
@@ -90,9 +105,14 @@ public class TornoDemo : MonoBehaviour
             foreach (var p in _pecasPlaca)
                 p.Rotate(eixoPlaca, rpmMandril * dt, Space.Self);
 
-        // Rotação da manivela do carro em sincronia com o avanço
+        // Rotação da manivela — RotateAround pelo centro REAL da mesh
+        // (corrige pivot fora do centro que causava efeito de "dar voltas")
         if (_carroAvancando && _manivela != null)
-            _manivela.Rotate(Vector3.forward, rpmMandril * 0.5f * dt, Space.Self);
+        {
+            Vector3 worldCenter = _manivela.TransformPoint(_manivelaCenter);
+            Vector3 worldAxis   = _manivela.TransformDirection(eixoManivela).normalized;
+            _manivela.RotateAround(worldCenter, worldAxis, rpmMandril * 0.5f * dt);
+        }
     }
 
     // ── Sequência principal ─────────────────────────────────────────────────
