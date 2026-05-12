@@ -221,8 +221,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 897e4821ad83e244297ec7cacfd720dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TornoDemo
-  ciclos: 1
+  ciclos: 0
   velocidade: 1
+  eixoPlaca: {x: 1, y: 0, z: 0}
+  rpmMandril: 240
+  deslocamentoCarro: {x: 0.5, y: 0, z: 0}
+  rotacaoTorre: {x: 0, y: 90, z: 0}
 --- !u!1 &633139394
 GameObject:
   m_ObjectHideFlags: 0
