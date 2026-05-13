@@ -33,9 +33,15 @@ public class TornoDemo : MonoBehaviour
     [Tooltip("Ângulo de rotação da torre na troca de ferramenta.")]
     public Vector3 rotacaoTorre = new Vector3(0f, 90f, 0f);
 
-    [Header("Manivela do Carro")]
-    [Tooltip("Eixo LOCAL de rotação da manivela. Ajuste se girar no eixo errado.")]
-    public Vector3 eixoManivela = Vector3.right;
+    [Header("Manivela do Carro (estilo volante)")]
+    [Tooltip("Eixo LOCAL de rotação da manivela. Se girar no plano errado: tente X (1,0,0), Y (0,1,0) ou Z (0,0,1).")]
+    public Vector3 eixoManivela = Vector3.up;
+
+    [Tooltip("Amplitude total de rotação por passada (graus). 540 = 1,5 voltas, 720 = 2 voltas (como volante de carro).")]
+    public float amplitudeManivela = 540f;
+
+    [Tooltip("Inverter sentido de rotação (se estiver girando ao contrário).")]
+    public bool inverterManivela = true;
 
     // ── Referências ─────────────────────────────────────────────────────────
     // Peças que giram juntas formando a placa/mandril
@@ -79,14 +85,24 @@ public class TornoDemo : MonoBehaviour
         if (_manivela  == null) Debug.LogWarning("[TornoDemo] 'MANIVELA CARRO' não encontrada — ok se não houver.");
         if (_torre     == null) Debug.LogWarning("[TornoDemo] 'TORRE DE FERRAMENTA' não encontrada — ok se não houver.");
 
-        // Calcula o centro real da mesh da manivela (em espaço local)
-        // para usar RotateAround — evita o efeito de "dar voltas em círculo"
-        // causado pelo pivot/origem do modelo estar fora do centro da roda.
+        // Calcula o centro VISUAL real da manivela considerando TODOS os Renderers
+        // (próprio + filhos). Necessário porque o pivot do FBX costuma estar
+        // deslocado — sem isso, a peça orbita em vez de girar no lugar.
         if (_manivela != null)
         {
-            var mf = _manivela.GetComponent<MeshFilter>();
-            _manivelaCenter = mf != null ? mf.sharedMesh.bounds.center : Vector3.zero;
-            Debug.Log($"[TornoDemo] Centro local da MANIVELA CARRO: {_manivelaCenter}");
+            var rends = _manivela.GetComponentsInChildren<Renderer>();
+            if (rends.Length > 0)
+            {
+                Bounds world = rends[0].bounds;
+                for (int i = 1; i < rends.Length; i++) world.Encapsulate(rends[i].bounds);
+                // Converte o centro world em local (relativo ao transform da manivela)
+                _manivelaCenter = _manivela.InverseTransformPoint(world.center);
+            }
+            else
+            {
+                _manivelaCenter = Vector3.zero;
+            }
+            Debug.Log($"[TornoDemo] Centro VISUAL local da MANIVELA CARRO: {_manivelaCenter} (renderers: {rends.Length})");
         }
 
         if (_carroLong != null)
@@ -105,14 +121,8 @@ public class TornoDemo : MonoBehaviour
             foreach (var p in _pecasPlaca)
                 p.Rotate(eixoPlaca, rpmMandril * dt, Space.Self);
 
-        // Rotação da manivela — RotateAround pelo centro REAL da mesh
-        // (corrige pivot fora do centro que causava efeito de "dar voltas")
-        if (_carroAvancando && _manivela != null)
-        {
-            Vector3 worldCenter = _manivela.TransformPoint(_manivelaCenter);
-            Vector3 worldAxis   = _manivela.TransformDirection(eixoManivela).normalized;
-            _manivela.RotateAround(worldCenter, worldAxis, rpmMandril * 0.5f * dt);
-        }
+        // (A manivela agora é controlada pela coroutina RotateManivelaVolante,
+        //  sincronizada com o avanço do carro — estilo volante de carro.)
     }
 
     // ── Sequência principal ─────────────────────────────────────────────────
@@ -143,8 +153,11 @@ public class TornoDemo : MonoBehaviour
         // ── 2. Carro avança — primeira passada de usinagem ──────────────────
         Debug.Log("[TornoDemo] Carro avançando (1ª passada)...");
         _carroAvancando = true;
+        // Inicia a manivela em paralelo (rotação tipo volante, sincronizada com o carro)
+        Coroutine manivCo1 = StartCoroutine(RotateManivelaVolante(amplitudeManivela, 4f));
         yield return StartCoroutine(
             MovePingPong(_carroLong, _carroOrigPos, deslocamentoCarro, 4f));
+        if (manivCo1 != null) yield return manivCo1;
         _carroAvancando = false;
         yield return Espera(0.8f);
 
@@ -157,8 +170,10 @@ public class TornoDemo : MonoBehaviour
         Debug.Log("[TornoDemo] Carro avançando (2ª passada)...");
         Vector3 pos2 = _carroLong != null ? _carroLong.localPosition : _carroOrigPos;
         _carroAvancando = true;
+        Coroutine manivCo2 = StartCoroutine(RotateManivelaVolante(amplitudeManivela * 0.7f, 3f));
         yield return StartCoroutine(
             MovePingPong(_carroLong, pos2, deslocamentoCarro * 0.7f, 3f));
+        if (manivCo2 != null) yield return manivCo2;
         _carroAvancando = false;
         yield return Espera(0.8f);
 
@@ -197,6 +212,55 @@ public class TornoDemo : MonoBehaviour
             yield return null;
         }
         t.localPosition = origem;
+    }
+
+    /// <summary>
+    /// Rotação tipo VOLANTE DE CARRO:
+    /// - Vai de 0 → +amplitude durante a IDA do carro (ex: 540° para a direita)
+    /// - Volta de +amplitude → 0 durante a VOLTA do carro (gira de volta ao centro)
+    /// Total: 1 ida e 1 volta como o motorista virando o volante e desfazendo.
+    /// </summary>
+    IEnumerator RotateManivelaVolante(float amplitudeGraus, float duracaoTotal)
+    {
+        if (_manivela == null) { yield return Espera(duracaoTotal); yield break; }
+
+        float sentido       = inverterManivela ? -1f : 1f;
+        float durReal       = duracaoTotal / velocidade;
+        float meio          = durReal * 0.5f;
+        float anguloAtual   = 0f;   // ângulo já acumulado em RotateAround
+        float anguloAnterior = 0f;
+
+        // ── IDA: 0° → +amplitude ────────────────────────────────────────────
+        float elapsed = 0f;
+        while (elapsed < meio)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / meio);
+            anguloAtual = Mathf.Lerp(0f, amplitudeGraus * sentido, t);
+            float delta = anguloAtual - anguloAnterior;
+            // Recalcula center+axis a cada frame (manivela acompanha o carro em movimento)
+            Vector3 worldCenter = _manivela.TransformPoint(_manivelaCenter);
+            Vector3 worldAxis   = _manivela.TransformDirection(eixoManivela).normalized;
+            _manivela.RotateAround(worldCenter, worldAxis, delta);
+            anguloAnterior = anguloAtual;
+            yield return null;
+        }
+
+        // ── VOLTA: +amplitude → 0° ──────────────────────────────────────────
+        elapsed = 0f;
+        float anguloInicialVolta = anguloAtual;
+        while (elapsed < meio)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / meio);
+            anguloAtual = Mathf.Lerp(anguloInicialVolta, 0f, t);
+            float delta = anguloAtual - anguloAnterior;
+            Vector3 worldCenter = _manivela.TransformPoint(_manivelaCenter);
+            Vector3 worldAxis   = _manivela.TransformDirection(eixoManivela).normalized;
+            _manivela.RotateAround(worldCenter, worldAxis, delta);
+            anguloAnterior = anguloAtual;
+            yield return null;
+        }
     }
 
     IEnumerator RotateBy(Transform t, Vector3 eulerDelta, float duracao)
