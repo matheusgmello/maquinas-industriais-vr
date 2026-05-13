@@ -23,10 +23,7 @@ Esta página lista as principais tecnologias, linguagens e softwares previstos p
 | Software | Uso previsto |
 | --- | --- |
 | Blender | Modelagem, ajustes do torno, materiais, exportação de FBX e preparação de assets 3D. |
-| Autodesk Fusion 360 | Possível modelagem técnica/CAD de peças industriais. |
-| FreeCAD | Alternativa livre para modelagem CAD. |
-| GIMP | Edição de imagens e texturas. |
-| Inkscape | Criação de ícones, diagramas e vetores. |
+| Blender 3.6.22| Versão usada no lab |
 
 ## Realidade virtual e interação
 
@@ -35,6 +32,7 @@ Esta página lista as principais tecnologias, linguagens e softwares previstos p
 | XR Interaction Toolkit | Interações VR no Unity, manipulação de objetos e locomoção. |
 | OpenXR | Camada padrão para compatibilidade com diferentes dispositivos VR. |
 | Unity Input System | Entrada de teclado, mouse, controles e dispositivos XR. |
+| Unity: versão 6.3 LTS | Versão usada para desenvolvimento |
 
 ## Documentação e versionamento
 
