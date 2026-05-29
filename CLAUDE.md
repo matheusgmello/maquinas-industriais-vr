@@ -4,6 +4,14 @@ Instruções e memória técnica completa do projeto para uso com Claude Code.
 
 ---
 
+## Regras de desenvolvimento
+
+- **Commits**: mensagem direta e objetiva. **Sem `Co-Authored-By`** em nenhum commit.
+- Explicações devem ser diretas e práticas — o usuário é iniciante em Unity.
+- O projeto é usado exclusivamente com Claude Code.
+
+---
+
 ## O que é este repositório
 
 Projeto educacional de **Realidade Virtual** para aprendizado de máquinas industriais. O foco atual é o **torno mecânico**. O objetivo de longo prazo é uma fábrica virtual com múltiplas máquinas.
@@ -12,7 +20,7 @@ O usuário é iniciante em Unity — explicações devem ser diretas e práticas
 
 ---
 
-## Estado atual (atualizado 2026-05-11)
+## Estado atual (atualizado 2026-05-29)
 
 ### O que está pronto
 
@@ -26,18 +34,43 @@ O usuário é iniciante em Unity — explicações devem ser diretas e práticas
   - `Torre_Rotacionando.anim` — TORRE 90° one-shot (1 s)
   - `Carro_Transversal.anim` — CARRO TRANSVERSAL translação (loop, 3 s)
 - `TornoController.controller` com parâmetros `PlacaGirando` (bool), `CarroAvancando` (bool), `TrocaFerramenta` (trigger).
-- Componente `Animator` configurado no objeto `torno` na cena.
-- Projeto Unity versionado no Git (`.gitignore` e `.gitattributes` corretos).
-- Documentação publicada via GitHub Pages (MkDocs + Material Theme).
+- **`TornoDemo.cs`** — script de demonstração automática com transforms diretos (sem Animator):
+  - Mandril gira (EIXO ÁRVORE + CASTANHA 1/2/3 juntos)
+  - CARRO LONGITUDINAL avança/recua (ping-pong)
+  - MANIVELA CARRO gira tipo volante (540° ida+volta, sincronizada com o carro)
+  - TORRE DE FERRAMENTA rotaciona 90° na troca de ferramenta
+- Projeto Unity versionado no Git. Documentação no GitHub Pages (MkDocs).
 
-### Próximos passos (por prioridade)
+---
 
-1. Ajustar eixos de animação em Play Mode (rotação/translação pode precisar de correção).
-2. Animar CASTANHA 1/2/3 (garras do mandril abrindo/fechando).
-3. Adicionar colisores (MeshCollider/BoxCollider) nas peças interativas.
-4. Configurar XR Origin com câmera e controladores.
-5. XR Grab Interactable nas manivelas + QuickOutline para hover.
-6. Hotspots didáticos (painéis informativos nas peças).
+## Roadmap de implementação
+
+### FASE 1 — Animações (atual)
+
+| # | Peça | O que fazer | Status |
+|---|---|---|---|
+| 1.1 | CASTANHA 1 / 2 / 3 | Garras do mandril abrindo e fechando radialmente | ❌ pendente |
+| 1.2 | CABEÇOTE MÓVEL | Translação no barramento (avanço do contraponto) | ❌ pendente |
+| 1.3 | FUSO | Rotação contínua sincronizada com avanço do carro | ❌ pendente |
+| 1.4 | CARRO TRANSVERSAL | Integrar no TornoDemo (já tem clip, falta usar no script) | ❌ pendente |
+| 1.5 | Eixos em Play Mode | Confirmar/corrigir eixos de todas as peças no Unity | ⚠️ parcial |
+
+### FASE 2 — Interação VR
+
+| # | O que fazer | Status |
+|---|---|---|
+| 2.1 | Colisores (MeshCollider/BoxCollider) nas peças interativas | ❌ pendente |
+| 2.2 | XR Origin com câmera e controladores configurados | ❌ pendente |
+| 2.3 | XR Grab Interactable nas manivelas | ❌ pendente |
+| 2.4 | QuickOutline nos objetos interativos (hover highlight) | ❌ pendente |
+
+### FASE 3 — Conteúdo didático
+
+| # | O que fazer | Status |
+|---|---|---|
+| 3.1 | Hotspots informativos (UI panels nas peças ao olhar/clicar) | ❌ pendente |
+| 3.2 | Narração/legenda explicando cada peça durante a demo | ❌ pendente |
+| 3.3 | Build executável (PC + Quest standalone) | ❌ pendente |
 
 ---
 
@@ -147,23 +180,12 @@ Ao adicionar páginas novas, registrar no `nav:` do `mkdocs.yml`.
 
 ---
 
-## Máquina virtual (informação histórica)
+## Máquina virtual (encerrado)
 
-O arquivo `DPADI0191-002.ova` é uma VM VirtualBox com Ubuntu 64-bit, 4 GB RAM, disco 40 GB. Pode conter material de desenvolvimento anterior. Não testada ainda. Rodar Unity/VR dentro de VM tende a degradar desempenho por limitações de aceleração gráfica.
+O arquivo `DPADI0191-002.ova` foi investigado (2026-05-29) — era uma VM de laboratório de redes de uma disciplina acadêmica, sem conteúdo relacionado ao projeto. Arquivo pode ser excluído.
 
 ---
 
-## Roadmap resumido
+## Fábrica virtual (futuro)
 
-### Torno mecânico
-- [x] Organização e versionamento
-- [x] Modelo FBX importado com hierarquia separada
-- [x] 13 materiais URP configurados
-- [x] 5 clips de animação + AnimatorController
-- [ ] Ajuste fino dos eixos de animação
-- [ ] Colisores + interação VR
-- [ ] Hotspots didáticos
-- [ ] Build executável
-
-### Fábrica virtual (futuro)
 Cenário com múltiplas máquinas: fresadora, furadeira, serra, prensa, esteira, robô industrial, painel elétrico.
