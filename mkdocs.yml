@@ -26,10 +26,8 @@ theme:
 
 nav:
   - Início: index.md
-  - Inventário: inventario.md
   - Unity: unity.md
   - Modelo 3D: modelo-3d.md
-  - Máquina Virtual: maquina-virtual.md
   - Stack: stack.md
   - Problemas e Soluções: problemas-e-solucoes.md
   - Roadmap: roadmap.md

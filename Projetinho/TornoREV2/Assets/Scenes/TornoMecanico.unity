@@ -227,6 +227,9 @@ MonoBehaviour:
   rpmMandril: 240
   deslocamentoCarro: {x: 0.5, y: 0, z: 0}
   rotacaoTorre: {x: 0, y: 90, z: 0}
+  eixoManivela: {x: 0, y: 1, z: 0}
+  amplitudeManivela: 540
+  inverterManivela: 1
 --- !u!1 &633139394
 GameObject:
   m_ObjectHideFlags: 0
