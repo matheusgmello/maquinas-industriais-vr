@@ -126,14 +126,14 @@ public class TornoDemo : MonoBehaviour
         // Demais peças
         _carroLong        = FindDeep("CARRO LONGITUDINAL");
         _carroTransversal = FindDeep("CARRO TRANSVERSAL");
-        _cabecote         = FindDeep("CABEÇOTE MÓVEL");
+        _cabecote         = FindDeep("CABEÇOTE MÓVEL.002");
         _fuso             = FindDeep("FUSO");
         _manivela         = FindDeep("MANIVELA CARRO");
         _torre            = FindDeep("TORRE DE FERRAMENTA");
 
         if (_carroLong        == null) Debug.LogWarning("[TornoDemo] 'CARRO LONGITUDINAL' não encontrado!");
         if (_carroTransversal == null) Debug.LogWarning("[TornoDemo] 'CARRO TRANSVERSAL' não encontrado — ok se não houver.");
-        if (_cabecote         == null) Debug.LogWarning("[TornoDemo] 'CABEÇOTE MÓVEL' não encontrado — ok se não houver.");
+        if (_cabecote         == null) Debug.LogWarning("[TornoDemo] 'CABEÇOTE MÓVEL.002' não encontrado — ok se não houver.");
         if (_fuso             == null) Debug.LogWarning("[TornoDemo] 'FUSO' não encontrado — ok se não houver.");
         if (_manivela         == null) Debug.LogWarning("[TornoDemo] 'MANIVELA CARRO' não encontrada — ok se não houver.");
         if (_torre            == null) Debug.LogWarning("[TornoDemo] 'TORRE DE FERRAMENTA' não encontrada — ok se não houver.");
