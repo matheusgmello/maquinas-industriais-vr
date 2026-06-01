@@ -26,11 +26,14 @@ public class TornoDemo : MonoBehaviour
     public float rpmMandril = 240f;
 
     [Header("Castanhas (garras do mandril)")]
-    [Tooltip("Distância radial que cada castanha percorre ao abrir (unidades Unity).")]
+    [Tooltip("Distância radial que cada castanha percorre ao fechar (unidades Unity).")]
     public float aberturaMaxCastanha = 0.04f;
 
     [Tooltip("Duração da abertura/fechamento das castanhas em segundos.")]
     public float duracaoCastanha = 0.6f;
+
+    [Tooltip("Inverte a direção radial das castanhas. Ative se elas abrirem quando deveriam fechar.")]
+    public bool inverterCastanhas = false;
 
     [Header("Carro Longitudinal")]
     [Tooltip("Deslocamento local do CARRO LONGITUDINAL durante a usinagem.")]
@@ -50,12 +53,24 @@ public class TornoDemo : MonoBehaviour
     [Tooltip("Duração do avanço/recuo do cabeçote em segundos.")]
     public float duracaoCabecote = 1.5f;
 
+    [Tooltip("Eixo LOCAL da manivela do cabeçote.")]
+    public Vector3 eixoManivelaC = Vector3.right;
+
+    [Tooltip("Amplitude de rotação da manivela do cabeçote (graus).")]
+    public float amplitudeManivelaCabecote = 360f;
+
+    [Tooltip("Inverte a direção da manivela do cabeçote.")]
+    public bool inverterManivelaCabecote = false;
+
     [Header("Fuso")]
     [Tooltip("Eixo LOCAL de rotação do fuso.")]
     public Vector3 eixoFuso = Vector3.right;
 
     [Tooltip("Graus por segundo do fuso (sincronizado com o avanço do carro).")]
     public float rpmFuso = 120f;
+
+    [Tooltip("Inverte o sentido de rotação do fuso.")]
+    public bool inverterFuso = false;
 
     [Header("Torre de Ferramenta")]
     [Tooltip("Ângulo de rotação da torre na troca de ferramenta.")]
@@ -82,9 +97,11 @@ public class TornoDemo : MonoBehaviour
     Transform _carroLong;
     Transform _carroTransversal;
     Transform _cabecote;
+    Transform _manivelaCabecote;
     Transform _fuso;
     Transform _manivela;
     Vector3   _manivelaCenter;
+    Vector3   _manivelaCCenter;
     Transform _torre;
 
     Vector3 _carroOrigPos;
@@ -127,6 +144,7 @@ public class TornoDemo : MonoBehaviour
         _carroLong        = FindDeep("CARRO LONGITUDINAL");
         _carroTransversal = FindDeep("CARRO TRANSVERSAL");
         _cabecote         = FindDeep("CABEÇOTE MÓVEL.002");
+        _manivelaCabecote = FindDeep("MANIVELA CABEÇOTE");
         _fuso             = FindDeep("FUSO");
         _manivela         = FindDeep("MANIVELA CARRO");
         _torre            = FindDeep("TORRE DE FERRAMENTA");
@@ -134,11 +152,12 @@ public class TornoDemo : MonoBehaviour
         if (_carroLong        == null) Debug.LogWarning("[TornoDemo] 'CARRO LONGITUDINAL' não encontrado!");
         if (_carroTransversal == null) Debug.LogWarning("[TornoDemo] 'CARRO TRANSVERSAL' não encontrado — ok se não houver.");
         if (_cabecote         == null) Debug.LogWarning("[TornoDemo] 'CABEÇOTE MÓVEL.002' não encontrado — ok se não houver.");
+        if (_manivelaCabecote == null) Debug.LogWarning("[TornoDemo] 'MANIVELA CABEÇOTE' não encontrada — ok se não houver.");
         if (_fuso             == null) Debug.LogWarning("[TornoDemo] 'FUSO' não encontrado — ok se não houver.");
         if (_manivela         == null) Debug.LogWarning("[TornoDemo] 'MANIVELA CARRO' não encontrada — ok se não houver.");
         if (_torre            == null) Debug.LogWarning("[TornoDemo] 'TORRE DE FERRAMENTA' não encontrada — ok se não houver.");
 
-        // Centro visual da manivela
+        // Centro visual da manivela do carro
         if (_manivela != null)
         {
             var rends = _manivela.GetComponentsInChildren<Renderer>();
@@ -147,6 +166,18 @@ public class TornoDemo : MonoBehaviour
                 Bounds world = rends[0].bounds;
                 for (int i = 1; i < rends.Length; i++) world.Encapsulate(rends[i].bounds);
                 _manivelaCenter = _manivela.InverseTransformPoint(world.center);
+            }
+        }
+
+        // Centro visual da manivela do cabeçote
+        if (_manivelaCabecote != null)
+        {
+            var rends = _manivelaCabecote.GetComponentsInChildren<Renderer>();
+            if (rends.Length > 0)
+            {
+                Bounds world = rends[0].bounds;
+                for (int i = 1; i < rends.Length; i++) world.Encapsulate(rends[i].bounds);
+                _manivelaCCenter = _manivelaCabecote.InverseTransformPoint(world.center);
             }
         }
 
@@ -167,7 +198,10 @@ public class TornoDemo : MonoBehaviour
                 p.Rotate(eixoPlaca, rpmMandril * dt, Space.Self);
 
         if (_fusoGirando && _fuso != null)
-            _fuso.Rotate(eixoFuso, rpmFuso * dt, Space.Self);
+        {
+            float sentidoFuso = inverterFuso ? -1f : 1f;
+            _fuso.Rotate(eixoFuso, rpmFuso * sentidoFuso * dt, Space.Self);
+        }
     }
 
     // ── Sequência principal ─────────────────────────────────────────────────
@@ -191,8 +225,12 @@ public class TornoDemo : MonoBehaviour
 
         // ── 1. Cabeçote avança para fixar a peça ────────────────────────────
         Debug.Log("[TornoDemo] Cabeçote avançando...");
+        Coroutine manivelaCo1 = StartCoroutine(
+            RotateManivelaVolante(_manivelaCabecote, _manivelaCCenter, eixoManivelaC,
+                amplitudeManivelaCabecote, inverterManivelaCabecote, duracaoCabecote));
         yield return StartCoroutine(MoveSmooth(_cabecote, _cabecoteOrigPos,
             _cabecoteOrigPos + deslocamentoCabecote, duracaoCabecote));
+        if (manivelaCo1 != null) yield return manivelaCo1;
         yield return Espera(0.5f);
 
         // ── 2. Castanhas fecham (prendem a peça) ────────────────────────────
@@ -249,8 +287,12 @@ public class TornoDemo : MonoBehaviour
 
         // ── 10. Cabeçote recua ───────────────────────────────────────────────
         Debug.Log("[TornoDemo] Cabeçote recuando...");
+        Coroutine manivelaCo2 = StartCoroutine(
+            RotateManivelaVolante(_manivelaCabecote, _manivelaCCenter, eixoManivelaC,
+                amplitudeManivelaCabecote, !inverterManivelaCabecote, duracaoCabecote));
         yield return StartCoroutine(MoveSmooth(_cabecote,
             _cabecoteOrigPos + deslocamentoCabecote, _cabecoteOrigPos, duracaoCabecote));
+        if (manivelaCo2 != null) yield return manivelaCo2;
         yield return Espera(0.5f);
     }
 
@@ -258,8 +300,8 @@ public class TornoDemo : MonoBehaviour
 
     /// <summary>
     /// Anima as 3 castanhas radialmente a partir de sua posição local original.
-    /// fechar=true → move em direção ao centro (0,0,0 local do pai).
-    /// fechar=false → move para a posição original (aberto).
+    /// fechar=true → move em direção ao centro. fechar=false → abre.
+    /// Use inverterCastanhas no Inspector se a direção estiver errada.
     /// </summary>
     IEnumerator AnimarCastanhas(bool fechar)
     {
@@ -269,6 +311,9 @@ public class TornoDemo : MonoBehaviour
         float durReal = duracaoCastanha / velocidade;
         float elapsed = 0f;
 
+        // inverterCastanhas troca o sinal do deslocamento
+        float sinal = inverterCastanhas ? 1f : -1f;
+
         while (elapsed < durReal)
         {
             elapsed += Time.deltaTime;
@@ -277,14 +322,10 @@ public class TornoDemo : MonoBehaviour
             for (int i = 0; i < _castanhas.Length; i++)
             {
                 if (_castanhas[i] == null) continue;
-
-                // Direção radial = do centro (0,0,0) para a posição original
-                Vector3 orig = _castanhasOrigPos[i];
-                Vector3 dir  = orig.normalized;
-
-                // Aberto = orig | Fechado = orig - dir * aberturaMax
-                Vector3 posAberta   = orig;
-                Vector3 posFechada  = orig - dir * aberturaMaxCastanha;
+                Vector3 orig       = _castanhasOrigPos[i];
+                Vector3 dir        = orig.normalized;
+                Vector3 posAberta  = orig;
+                Vector3 posFechada = orig + dir * (aberturaMaxCastanha * sinal);
 
                 _castanhas[i].localPosition = fechar
                     ? Vector3.Lerp(posAberta,  posFechada, t)
@@ -337,11 +378,18 @@ public class TornoDemo : MonoBehaviour
         t.localPosition = origem;
     }
 
+    // Atalho para a manivela do carro (mantém assinatura original das chamadas)
     IEnumerator RotateManivelaVolante(float amplitudeGraus, float duracaoTotal)
-    {
-        if (_manivela == null) { yield return Espera(duracaoTotal); yield break; }
+        => RotateManivelaVolante(_manivela, _manivelaCenter, eixoManivela,
+                                 amplitudeGraus, inverterManivela, duracaoTotal);
 
-        float sentido        = inverterManivela ? -1f : 1f;
+    // Versão genérica — usada pelo carro e pelo cabeçote
+    IEnumerator RotateManivelaVolante(Transform manivela, Vector3 center, Vector3 eixo,
+                                      float amplitudeGraus, bool inverter, float duracaoTotal)
+    {
+        if (manivela == null) { yield return Espera(duracaoTotal); yield break; }
+
+        float sentido        = inverter ? -1f : 1f;
         float durReal        = duracaoTotal / velocidade;
         float meio           = durReal * 0.5f;
         float anguloAtual    = 0f;
@@ -354,9 +402,9 @@ public class TornoDemo : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / meio);
             anguloAtual = Mathf.Lerp(0f, amplitudeGraus * sentido, t);
             float delta = anguloAtual - anguloAnterior;
-            Vector3 worldCenter = _manivela.TransformPoint(_manivelaCenter);
-            Vector3 worldAxis   = _manivela.TransformDirection(eixoManivela).normalized;
-            _manivela.RotateAround(worldCenter, worldAxis, delta);
+            Vector3 worldCenter = manivela.TransformPoint(center);
+            Vector3 worldAxis   = manivela.TransformDirection(eixo).normalized;
+            manivela.RotateAround(worldCenter, worldAxis, delta);
             anguloAnterior = anguloAtual;
             yield return null;
         }
@@ -369,9 +417,9 @@ public class TornoDemo : MonoBehaviour
             float t = Mathf.Clamp01(elapsed / meio);
             anguloAtual = Mathf.Lerp(anguloInicialVolta, 0f, t);
             float delta = anguloAtual - anguloAnterior;
-            Vector3 worldCenter = _manivela.TransformPoint(_manivelaCenter);
-            Vector3 worldAxis   = _manivela.TransformDirection(eixoManivela).normalized;
-            _manivela.RotateAround(worldCenter, worldAxis, delta);
+            Vector3 worldCenter = manivela.TransformPoint(center);
+            Vector3 worldAxis   = manivela.TransformDirection(eixo).normalized;
+            manivela.RotateAround(worldCenter, worldAxis, delta);
             anguloAnterior = anguloAtual;
             yield return null;
         }

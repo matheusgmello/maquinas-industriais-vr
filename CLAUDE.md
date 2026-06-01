@@ -20,7 +20,7 @@ O usuário é iniciante em Unity — explicações devem ser diretas e práticas
 
 ---
 
-## Estado atual (atualizado 2026-05-29)
+## Estado atual (atualizado 2026-06-01)
 
 ### O que está pronto
 
@@ -36,9 +36,13 @@ O usuário é iniciante em Unity — explicações devem ser diretas e práticas
 - `TornoController.controller` com parâmetros `PlacaGirando` (bool), `CarroAvancando` (bool), `TrocaFerramenta` (trigger).
 - **`TornoDemo.cs`** — script de demonstração automática com transforms diretos (sem Animator):
   - Mandril gira (EIXO ÁRVORE + CASTANHA 1/2/3 juntos)
-  - CARRO LONGITUDINAL avança/recua (ping-pong)
-  - MANIVELA CARRO gira tipo volante (540° ida+volta, sincronizada com o carro)
+  - CASTANHA 1/2/3 fecham/abrem radialmente (prender/soltar peça)
+  - CARRO LONGITUDINAL avança/recua (ping-pong) + FUSO sincronizado
+  - MANIVELA CARRO gira tipo volante (540° ida+volta)
+  - CARRO TRANSVERSAL avança/recua (passada de faceamento)
+  - CABEÇOTE MÓVEL.002 avança/recua (contraponto) + MANIVELA CABEÇOTE sincronizada
   - TORRE DE FERRAMENTA rotaciona 90° na troca de ferramenta
+  - Sequência realista: cabeçote → castanhas fecham → máquina liga → usinagem → desliga → castanhas abrem → cabeçote recua
 - Projeto Unity versionado no Git. Documentação no GitHub Pages (MkDocs).
 
 ---
@@ -49,11 +53,20 @@ O usuário é iniciante em Unity — explicações devem ser diretas e práticas
 
 | # | Peça | O que fazer | Status |
 |---|---|---|---|
-| 1.1 | CASTANHA 1 / 2 / 3 | Garras do mandril abrindo e fechando radialmente | ❌ pendente |
-| 1.2 | CABEÇOTE MÓVEL | Translação no barramento (avanço do contraponto) | ❌ pendente |
-| 1.3 | FUSO | Rotação contínua sincronizada com avanço do carro | ❌ pendente |
-| 1.4 | CARRO TRANSVERSAL | Integrar no TornoDemo (já tem clip, falta usar no script) | ❌ pendente |
-| 1.5 | Eixos em Play Mode | Confirmar/corrigir eixos de todas as peças no Unity | ⚠️ parcial |
+| 1.1 | CASTANHA 1 / 2 / 3 | Garras do mandril abrindo e fechando radialmente | ✅ implementado |
+| 1.2 | CABEÇOTE MÓVEL.002 | Translação no barramento (avanço do contraponto) | ✅ implementado |
+| 1.3 | FUSO | Rotação contínua sincronizada com avanço do carro | ✅ implementado |
+| 1.4 | CARRO TRANSVERSAL | Integrar no TornoDemo | ✅ implementado |
+| 1.5 | MANIVELA CABEÇOTE | Girar sincronizada com o avanço do cabeçote | ✅ implementado |
+| 1.6 | Eixos em Play Mode | Confirmar/corrigir eixos de todas as peças no Unity | ⚠️ pendente verificação visual |
+
+**Campos ajustáveis no Inspector (sem precisar editar código):**
+- `Inverter Manivela` — inverte sentido da manivela do carro
+- `Inverter Fuso` — inverte sentido de rotação do fuso
+- `Inverter Castanhas` — inverte direção radial das garras
+- `Inverter Manivela Cabeçote` — inverte sentido da manivela do contraponto
+- `Abertura Max Castanha` — distância de abertura/fechamento das garras
+- `Deslocamento Cabeçote` — direção e distância que o cabeçote percorre
 
 ### FASE 2 — Interação VR
 
