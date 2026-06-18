@@ -48,7 +48,7 @@ public class TornoDemo : MonoBehaviour
 
     [Header("Cabeçote Móvel (Contraponto)")]
     [Tooltip("Deslocamento local do CABEÇOTE MÓVEL ao avançar para fixar a peça.")]
-    public Vector3 deslocamentoCabecote = new Vector3(-0.3f, 0f, 0f);
+    public Vector3 deslocamentoCabecote = new Vector3(-0.15f, 0f, 0f);
 
     [Tooltip("Duração do avanço/recuo do cabeçote em segundos.")]
     public float duracaoCabecote = 1.5f;
@@ -179,6 +179,15 @@ public class TornoDemo : MonoBehaviour
                 for (int i = 1; i < rends.Length; i++) world.Encapsulate(rends[i].bounds);
                 _manivelaCCenter = _manivelaCabecote.InverseTransformPoint(world.center);
             }
+        }
+
+        // Garante que a manivela do cabeçote seja filha do cabeçote,
+        // para que se desloque junto com o corpo ao avançar/recuar.
+        if (_cabecote != null && _manivelaCabecote != null
+            && _manivelaCabecote.parent != _cabecote)
+        {
+            _manivelaCabecote.SetParent(_cabecote, worldPositionStays: true);
+            Debug.Log("[TornoDemo] MANIVELA CABEÇOTE re-parenteada para CABEÇOTE MÓVEL.002.");
         }
 
         if (_carroLong        != null) _carroOrigPos       = _carroLong.localPosition;
